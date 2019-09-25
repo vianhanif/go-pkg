@@ -43,12 +43,14 @@ func BuildFilter(params ...QueryFilter) (Query, []interface{}) {
 	where := ""
 	args := []interface{}{}
 	id := 1
+	orderBy := ""
 	offset := ""
 	limit := ""
 	for _, param := range params {
 		switch {
 		case param.Operation == "order":
-			where = fmt.Sprintf(`%s ORDER BY %s %s`, where, param.Column, param.Value)
+			where = fmt.Sprintf(`%s ORDER BY %s %s`, where, param.Column, strings.ToUpper(param.Value))
+			orderBy = param.Column
 		case param.Operation == "limit":
 			where = fmt.Sprintf(`%s LIMIT %s`, where, param.Value)
 			limit = param.Value
@@ -73,7 +75,7 @@ func BuildFilter(params ...QueryFilter) (Query, []interface{}) {
 			args = append(args, param.Value)
 		}
 	}
-	return Query{Value: where, limit: limit, offset: offset}, args
+	return Query{Value: where, limit: limit, offset: offset, orderBy: orderBy}, args
 }
 
 // Limit .
@@ -95,12 +97,18 @@ func (q Query) Offset() int {
 }
 
 // OrderBy .
-func (q Query) OrderBy() int {
-	v, err := strconv.Atoi(q.orderBy)
-	if err != nil {
-		panic(err)
+func (q Query) OrderBy() string {
+	var value = ""
+	if strings.Contains(q.orderBy, "ORDER BY") {
+		value = strings.Split(q.orderBy, "ORDER BY")[1]
 	}
-	return v
+	if strings.Contains(q.orderBy, "DESC") {
+		value = strings.Split(q.orderBy, "DESC")[0]
+	}
+	if strings.Contains(q.orderBy, "ASC") {
+		value = strings.Split(q.orderBy, "ASC")[0]
+	}
+	return value
 }
 
 func (q Query) String() string {
@@ -108,8 +116,14 @@ func (q Query) String() string {
 	if strings.Contains(q.Value, "WHERE") {
 		value = strings.Split(q.Value, "WHERE")[1]
 	}
-	if strings.Contains(value, "ORDER") {
-		value = strings.Split(value, "ORDER")[0]
+	if strings.Contains(value, "ORDER BY") {
+		value = strings.Split(value, "ORDER BY")[1]
+	}
+	if strings.Contains(q.orderBy, "DESC") {
+		value = strings.Split(q.orderBy, "DESC")[0]
+	}
+	if strings.Contains(q.orderBy, "ASC") {
+		value = strings.Split(q.orderBy, "ASC")[0]
 	}
 	if strings.Contains(value, "LIMIT") {
 		value = strings.Split(value, "LIMIT")[0]
