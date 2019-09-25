@@ -9,9 +9,10 @@ import (
 
 // Query : query object
 type Query struct {
-	Value  string
-	limit  string
-	offset string
+	Value   string
+	orderBy string
+	limit   string
+	offset  string
 }
 
 // QueryFilter : represent a query value with its corresponding column and operation
@@ -93,10 +94,22 @@ func (q Query) Offset() int {
 	return v
 }
 
+// OrderBy .
+func (q Query) OrderBy() int {
+	v, err := strconv.Atoi(q.orderBy)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func (q Query) String() string {
 	var value = ""
 	if strings.Contains(q.Value, "WHERE") {
 		value = strings.Split(q.Value, "WHERE")[1]
+	}
+	if strings.Contains(value, "ORDER") {
+		value = strings.Split(value, "ORDER")[0]
 	}
 	if strings.Contains(value, "LIMIT") {
 		value = strings.Split(value, "LIMIT")[0]
