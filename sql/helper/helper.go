@@ -94,10 +94,17 @@ func (q Query) Offset() int {
 }
 
 func (q Query) String() string {
+	var value = ""
 	if strings.Contains(q.Value, "WHERE") {
-		return strings.Split(q.Value, "WHERE")[1]
+		value = strings.Split(q.Value, "WHERE")[1]
 	}
-	return q.Value
+	if strings.Contains(value, "LIMIT") {
+		value = strings.Split(value, "LIMIT")[0]
+	}
+	if strings.Contains(value, "OFFSET") {
+		value = strings.Split(value, "OFFSET")[0]
+	}
+	return value
 }
 
 func contains(required []string, key string) bool {
