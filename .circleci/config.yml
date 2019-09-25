@@ -15,21 +15,9 @@ jobs:
     #### expecting it in the form of
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/vianhanif/todo-service
+    working_directory: /go/src/github.com/vianhanif/go-pkg
     steps:
       - checkout
-
-      # specify any bash command here prefixed with `run: `
-      - run:
-          name: Waiting for Postgres to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for Postgres && exit 1
 
       - run:
           command: sh ./build/test.sh
