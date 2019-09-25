@@ -10,10 +10,6 @@ jobs:
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/postgres:10.5
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: sample
 
     #### TEMPLATE_NOTE: go expects specific checkout path representing url
     #### expecting it in the form of
@@ -34,12 +30,6 @@ jobs:
               sleep 1
             done
             echo Failed waiting for Postgres && exit 1
-      - run:
-          command: sh ./build/migrate.sh
-          environment:
-              TODO_DB: "dbname=sample host=127.0.0.1 sslmode=disable user=postgres"
 
       - run:
           command: sh ./build/test.sh
-          environment:
-              TODO_DB: "dbname=sample host=127.0.0.1 sslmode=disable user=postgres"
