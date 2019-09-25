@@ -3,7 +3,13 @@ package helper
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
+
+// Query : query object
+type Query struct {
+	Value string
+}
 
 // QueryFilter : represent a query value with its corresponding column and operation
 type QueryFilter struct {
@@ -29,7 +35,7 @@ func appendFilter(where, key string, column string, operator string, id int) (st
 }
 
 // BuildFilter conbine all parameters into a query statement
-func BuildFilter(params ...QueryFilter) (string, []interface{}) {
+func BuildFilter(params ...QueryFilter) (Query, []interface{}) {
 	where := ""
 	args := []interface{}{}
 	id := 1
@@ -59,7 +65,14 @@ func BuildFilter(params ...QueryFilter) (string, []interface{}) {
 			args = append(args, param.Value)
 		}
 	}
-	return where, args
+	return Query{Value: where}, args
+}
+
+func (q Query) String() string {
+	if strings.Contains(q.Value, "WHERE") {
+		return strings.Split(q.Value, "WHERE")[1]
+	}
+	return q.Value
 }
 
 func contains(required []string, key string) bool {
