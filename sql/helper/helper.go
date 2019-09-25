@@ -98,17 +98,7 @@ func (q Query) Offset() int {
 
 // OrderBy .
 func (q Query) OrderBy() string {
-	var value = ""
-	if strings.Contains(q.orderBy, "ORDER BY") {
-		value = strings.Split(q.orderBy, "ORDER BY")[1]
-	}
-	if strings.Contains(q.orderBy, "DESC") {
-		value = strings.Split(q.orderBy, "DESC")[0]
-	}
-	if strings.Contains(q.orderBy, "ASC") {
-		value = strings.Split(q.orderBy, "ASC")[0]
-	}
-	return value
+	return q.orderBy
 }
 
 func (q Query) String() string {
